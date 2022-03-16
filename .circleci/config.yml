@@ -1,0 +1,26 @@
+version: 2.1
+jobs:
+  build:
+    machine:
+      image: ubuntu-2004:202111-02
+    resource_class: large
+    steps:
+      - run: |
+          export PATH=~/bin:$PATH
+          sudo apt update
+          sudo apt install git aria2 python-is-python2 libncurses5 -y
+          sudo curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+          sudo chmod +x ~/bin/repo
+
+      - run: |
+          git config --global user.email "anandsingh215@yahoo.com"
+          git config --global user.name "Anand Shekhawat"
+          git clone https://gitlab.com/OrangeFox/sync.git && cd sync
+          ./orangefox_sync.sh --branch 9.0 --path ~/fox_9.0 -s 0
+          git clone https://gitlab.com/OrangeFox/vendor/qcom/opensource/commonsys.git -b android-9.0 ~/fox_9.0/vendor/qcom/opensource/commonsys
+          git clone https://github.com/shekhawat2/fox_device_xiaomi_whyred ~/fox_9.0/device/xiaomi/whyred
+
+      - run: |
+          cd ~/fox_9.0
+          . build/envsetup.sh
+          lunch omni_whyred-eng && mka recoveryimage
