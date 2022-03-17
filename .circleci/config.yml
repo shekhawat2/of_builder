@@ -24,3 +24,8 @@ jobs:
           cd ~/fox_9.0
           . build/envsetup.sh
           lunch omni_whyred-eng && mka recoveryimage
+
+      - run: |
+          FILE=$(ls ~/fox_9.0/out/target/product/whyred/OrangeFox-*.zip)
+          ssh-keyscan -t ecdsa -p 22 -H frs.sourceforge.net 2>&1 | tee -a ~/.ssh/known_hosts
+          scp $FILE shekhawat2@frs.sourceforge.net:/home/frs/project/whyred-orangefox/TEST
