@@ -8,7 +8,7 @@ jobs:
       - run: |
           export PATH=~/bin:$PATH
           sudo apt update
-          sudo apt install git aria2 python-is-python2 libncurses5 -y
+          sudo apt install git aria2 python3 libncurses5 -y
           sudo curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
           sudo chmod +x ~/bin/repo
 
@@ -16,15 +16,15 @@ jobs:
           git config --global user.email "anandsingh215@yahoo.com"
           git config --global user.name "Anand Shekhawat"
           git clone https://gitlab.com/OrangeFox/sync.git && cd sync
-          ./orangefox_sync.sh --branch 9.0 --path ~/fox_9.0 -s 0
-          git clone https://github.com/shekhawat2/fox_device_xiaomi_whyred ~/fox_9.0/device/xiaomi/whyred
+          ./orangefox_sync.sh --branch 12.1 --path ~/fox_12.1 -s 0
+          git clone https://github.com/shekhawat2/fox_device_xiaomi_whyred -b fox_12.1-4.19 ~/fox_12.1/device/xiaomi/whyred
 
       - run: |
-          cd ~/fox_9.0
-          . build/envsetup.sh
-          lunch omni_whyred-eng && mka recoveryimage
+          cd ~/fox_12.1
+          . build/envsetup.sh || true
+          lunch twrp_whyred-eng && mka recoveryimage
 
       - run: |
-          FILE=$(ls ~/fox_9.0/out/target/product/whyred/OrangeFox-*.zip)
+          FILE=$(ls ~/fox_12.1/out/target/product/whyred/OrangeFox-*.zip)
           ssh-keyscan -t ecdsa -p 22 -H frs.sourceforge.net 2>&1 | tee -a ~/.ssh/known_hosts
           scp $FILE shekhawat2@frs.sourceforge.net:/home/frs/project/whyred-orangefox/TEST
